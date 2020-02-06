@@ -1,12 +1,12 @@
 <template>
     <Page actionBarHidden="true" @loaded="onLoad">
         <DockLayout class="homepage" stretchLastChild="false">
-            <FlexboxLayout flexDirection="column" alignItems="center" dock="top" width="100%" class="homepage__logo--container" ref="logoContainer">
+            <FlexboxLayout flexDirection="column" alignItems="center" dock="top" width="100%" class="homepage__logo--container" id="logoContainer">
                 <Image :src="imageSrc" class="homepage__logo--container__image" />
                 <Label text="Cool Music" class="homepage__logo--container__text"/>
             </FlexboxLayout>
-            <FlexboxLayout flexDirection="column" class="homepage__buttons" dock="bottom" ref="buttonsContainer">
-                <Button text="Sign in"  class="homepage__buttons--button" @tap="onTap"/>
+            <FlexboxLayout flexDirection="column" class="homepage__buttons" dock="bottom" id="buttonsContainer">
+                <Button text="Sign in"  class="homepage__buttons--button" @tap="loginPageNavigate"/>
                 <Label text="Sign up" class="homepage__buttons--signup" />
             </FlexboxLayout>
         </DockLayout>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import WelcomePage from "./WelcomePage"
+import LoginPage from "./Login"
 import { AnimationCurve } from "ui/enums"
 export default {
         data() {
@@ -26,33 +26,36 @@ export default {
             console.log("Done")
         },
         methods: {
-            onButtonTap: function() {
+            loginPageNavigate: function() {
                 console.log("Tapped");
-                this.$navigateTo(WelcomePage, {
+                this.$navigateTo(LoginPage, {
                     animated: true, 
                     transition: {
                         name: 'slide', 
-                        duration: 400
+                        duration: 300
                     }
                 });
             }, 
             onLoad: function(args){
                 console.log(args)
-                this.$refs.logoContainer.nativeView.animate({
+                const page = args.object;
+                const logoContainer = page.getViewById("logoContainer")
+                const buttonsContainer = page.getViewById("buttonsContainer")
+                logoContainer.animate({
                     scale: {x: 1, y: 1},
                     // translate: { y: 0, x:0 },
-                    duration: 700, 
-                    delay: 700, 
+                    duration: 500, 
+                    delay: 500, 
                     opacity: 1, 
-                    curve: AnimationCurve.easeOut
+                    curve: AnimationCurve.easeInOut
                 })
 
-                this.$refs.buttonsContainer.nativeView.animate({
+                buttonsContainer.animate({
                     translate: {x:0, y:0}, 
-                    duration: 700, 
+                    duration: 500, 
                     delay: 900, 
                     opacity:1, 
-                    curve: AnimationCurve.easeInOut
+                    curve: AnimationCurve.easeOut
                 })
             }
         }
