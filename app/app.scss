@@ -1,2 +1,8 @@
 // Global SCSS styling
 // @see https://docs.nativescript.org/ui/styling
+.button {
+    border-radius: 10;
+    padding: 15 0;
+    width: 100%;
+    font-size: 20;
+}
