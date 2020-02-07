@@ -13,6 +13,8 @@ Vue.config.silent = (TNS_ENV === 'production')
 
 // Register plugins:
 Vue.registerElement("Gradient", () => require("nativescript-gradient").Gradient);
+Vue.registerElement('Carousel', () => require('nativescript-carousel').Carousel);
+Vue.registerElement('CarouselItem', () => require('nativescript-carousel').CarouselItem);
 
 
 new Vue({

@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@vue/devtools": "^5.0.6",
+    "nativescript-carousel": "^6.1.1",
     "nativescript-fonticon": "^2.0.0",
     "nativescript-gradient": "^2.0.1",
     "nativescript-socketio": "^3.2.1",
