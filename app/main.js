@@ -3,9 +3,12 @@ import App from './components/App'
 
 import store from './store'
 import VueDevtools from 'nativescript-vue-devtools'
+import RadListView from 'nativescript-ui-listview/vue';
+
 
 if(TNS_ENV !== 'production') {
   Vue.use(VueDevtools)
+  Vue.use(RadListView);
 }
   
 // Prints Vue logs when --env.production is *NOT* set while building

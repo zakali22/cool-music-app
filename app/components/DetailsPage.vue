@@ -1,5 +1,5 @@
 <template>
-    <Page actionBarHidden="true" class="detailpage" @load="onLoad"> 
+    <Page actionBarHidden="true" class="detailpage" @navigatedTo="onLoad"> 
         <ScrollView orientation="vertical" scrollBarIndicatorVisible="true">
             <DockLayout stretchLastChild="true" class="detailpage__container">
                 <AbsoluteLayout height="300" dock="top" class="detailpage__container--header">
@@ -44,27 +44,23 @@
                         </FlexboxLayout>
                         <Image src="~/assets/images/bars-solid.png" height="30" width="30"/>
                     </FlexboxLayout>
-                    <StackLayout orientation="vertical" paddingLeft="10" class="detailpage__container--content__list"> <!-- List container -->
-                        <ListView for="(song, index) in songs" height="100%">
-                            <v-template>
-                                <StackLayout>
-                                    <GridLayout columns="auto,*,auto" row="auto" marginTop="30"> <!-- Individual Grid -->
-                                        <Label :text="`0${index+1}`" col="0" row="0" rowSpan="2" verticalAlignment="center" class="detailpage__container--content__list--number"/>
-                                        <GridLayout col="1" row="0" columns="auto,*" class="detailpage__container--content__list--details" marginLeft="20">
-                                            <StackLayout col="0" row="0" rowSpan="2" marginRight="20">
-                                                <Image :src="song.img" height="60" width="60" borderRadius="50%" />
-                                            </StackLayout>
-                                            <StackLayout orientation="vertical" col="1" row="0">
-                                                <Label :text="song.title"  class="detailpage__container--content__list--title"/>
-                                                <Label :text="song.artist" class="detailpage__container--content__list--artist"/>
-                                            </StackLayout>
-                                        </GridLayout>
-                                        <Image src="~/assets/images/ellipsis-v-solid.png" rowSpan="2" verticalAlignment="center" height="25" width="25" col="2" row="0"/>
-                                    </GridLayout> 
+                    <RadListView height="60.8" for="(song, index) in songs"  orientation="vertical" paddingLeft="10" class="detailpage__container--content__list" height="100%"> <!-- List container -->        
+                        <v-template>
+                        <GridLayout id="songLayout" columns="auto,*,auto" row="auto" marginTop="30"> <!-- Individual Grid -->
+                            <Label text="1" col="0" row="0" rowSpan="2" verticalAlignment="center" class="detailpage__container--content__list--number"/>
+                            <GridLayout col="1" row="0" columns="auto,*" class="detailpage__container--content__list--details" marginLeft="20">
+                                <StackLayout col="0" row="0" rowSpan="2" marginRight="20">
+                                    <Image :src="song.img" height="60" width="60" borderRadius="50%" />
                                 </StackLayout>
-                            </v-template>
-                        </ListView>
-                    </StackLayout>
+                                <StackLayout orientation="vertical" col="1" row="0">
+                                    <Label :text="song.title"  class="detailpage__container--content__list--title"/>
+                                    <Label :text="song.artist" class="detailpage__container--content__list--artist"/>
+                                </StackLayout>
+                            </GridLayout>
+                            <Image src="~/assets/images/ellipsis-v-solid.png" rowSpan="2" verticalAlignment="center" height="25" width="25" col="2" row="0"/>
+                        </GridLayout> 
+                        </v-template>
+                    </RadListView>
                 </StackLayout> 
             </DockLayout>
         </ScrollView>
@@ -102,7 +98,9 @@ export default {
     methods: {
         onLoad: function(args){
             const page = args.object;
+            const songLayout = page.getViewById('songLayout');
 
+            console.log(songLayout.getActualSize().height)
         }
     }
 }
