@@ -52,9 +52,14 @@ export default {
             console.log("Tapped forgot password")
         }, 
         submitForm: function(){
-            console.log("Tapped login button")
-            alert("Done")
-            this.$navigateTo(MusicHome)
+            this.$navigateTo(MusicHome, {
+                animate: true, 
+                transition: {
+                    name: 'slide', 
+                    duration: 200
+                }
+
+            })
         },
         onLoadAnimation: function(args){
             const page = args.object;

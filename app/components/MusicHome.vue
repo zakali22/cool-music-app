@@ -1,31 +1,38 @@
 <template>
-    <Page actionBarHidden="true">
-        <DockLayout stretchLastChild="true">
-            <AbsoluteLayout dock="top">
-                <GridLayout height="300" width="100%">
-                    <Carousel col="0" row="0" verticalAlignment="top" height="100%" width="100%" pageChanged="myChangeEvent" pageTapped="mySelectedEvent" indicatorColor="white" finite="true" bounce="true" showIndicator="true" android:indicatorAnimation="swap" color="white">
-                        <CarouselItem id="slide1" backgroundColor="#b3cde0" verticalAlignment="middle">
-                        </CarouselItem>
-                        <CarouselItem id="slide2" backgroundColor="#6497b1" verticalAlignment="middle">
-                        </CarouselItem>
-                        <CarouselItem id="slide3" backgroundColor="#005b96" verticalAlignment="middle">
-                        </CarouselItem>
-                    </Carousel>
-                </GridLayout>
-            </AbsoluteLayout>
-            <Label text="Content"/>
-        </DockLayout>
+    <Page actionBarHidden="true" class="musicpage">
+        <GridLayout columns="*">
+            <Frame id="main-music-page">
+                <MusicPageContainer />
+            </Frame>
+            <Frame @loaded="pushDown">
+                <MusicPlayer />
+            </Frame>
+            <Frame @loaded="pushDown1">
+                <BottomNav />
+            </Frame>
+        </GridLayout>
     </Page>
 </template>
 <script>
+import MusicPageContainer from "./MusicPageContainer"
+import MusicPlayer from "./MusicPlayer"
+import BottomNav from "./BottomNav"
+import {screen} from "tns-core-modules/platform"
 export default {
-    data(){
-        return {
-            
+    components: {
+        MusicPageContainer, 
+        MusicPlayer, 
+        BottomNav
+    },
+    methods: {
+        pushDown: function(args){
+            const frame = args.object;
+            frame.translateY = screen.mainScreen.heightDIPs - 250;
+        }, 
+        pushDown1: function(args){
+            const frame = args.object;
+            frame.translateY = screen.mainScreen.heightDIPs - 150
         }
     }
 }
 </script>
-<style>
-
-</style>
