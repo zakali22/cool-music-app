@@ -36,14 +36,35 @@
                         <StackLayout />
                     </AbsoluteLayout>
                 </AbsoluteLayout>
-                <StackLayout dock="bottom" marginTop="20"> <!--Main content -->
-                    <FlexboxLayout flexDirection="row" alignItems="center" justifyContent="space-between" paddingRight="20" paddingLeft="20">
+                <StackLayout dock="bottom" marginTop="20" paddingRight="20" paddingLeft="20" class="detailpage__container--content"> <!--Main content -->
+                    <FlexboxLayout flexDirection="row" alignItems="center" justifyContent="space-between" class="detailpage__container--content__play">
                         <FlexboxLayout flexDirection="row" alignItems="center">
                             <Image src="~/assets/images/bt1.png" height="35" width="35" marginRight="10"/>
                             <Label text="Play All (First 32)" fontSize="17"/>
                         </FlexboxLayout>
                         <Image src="~/assets/images/bars-solid.png" height="30" width="30"/>
                     </FlexboxLayout>
+                    <StackLayout orientation="vertical" paddingLeft="10" class="detailpage__container--content__list"> <!-- List container -->
+                        <ListView for="(song, index) in songs" height="100%">
+                            <v-template>
+                                <StackLayout>
+                                    <GridLayout columns="auto,*,auto" row="auto" marginTop="30"> <!-- Individual Grid -->
+                                        <Label :text="`0${index+1}`" col="0" row="0" rowSpan="2" verticalAlignment="center" class="detailpage__container--content__list--number"/>
+                                        <GridLayout col="1" row="0" columns="auto,*" class="detailpage__container--content__list--details" marginLeft="20">
+                                            <StackLayout col="0" row="0" rowSpan="2" marginRight="20">
+                                                <Image :src="song.img" height="60" width="60" borderRadius="50%" />
+                                            </StackLayout>
+                                            <StackLayout orientation="vertical" col="1" row="0">
+                                                <Label :text="song.title"  class="detailpage__container--content__list--title"/>
+                                                <Label :text="song.artist" class="detailpage__container--content__list--artist"/>
+                                            </StackLayout>
+                                        </GridLayout>
+                                        <Image src="~/assets/images/ellipsis-v-solid.png" rowSpan="2" verticalAlignment="center" height="25" width="25" col="2" row="0"/>
+                                    </GridLayout> 
+                                </StackLayout>
+                            </v-template>
+                        </ListView>
+                    </StackLayout>
                 </StackLayout> 
             </DockLayout>
         </ScrollView>
@@ -54,7 +75,28 @@ import {screen} from "tns-core-modules/platform"
 export default {
     data(){
         return {
-
+            songs: [
+                {
+                    img: "~/assets/images/camila-songs/1.png", 
+                    title: "Beautiful in white",
+                    artist: "Westlife"
+                },
+                {
+                    img: "~/assets/images/camila-songs/1.png", 
+                    title: "DDU-DU-DDU-DU",
+                    artist: "BLACKPINK"
+                },
+                {
+                    img: "~/assets/images/camila-songs/1.png", 
+                    title: "Hold On to My Side",
+                    artist: "Xiaoxue Liang"
+                },
+                {
+                    img: "~/assets/images/camila-songs/1.png", 
+                    title: "True Valentine",
+                    artist: "Weki Meki"
+                }
+            ]
         }
     },
     methods: {
@@ -81,6 +123,30 @@ export default {
                 Label {
                     font-family: 'Roboto, Roboto-Regular';
                     margin-top: 12;
+                }
+            }
+        }
+        &--content {
+            font-size: 23;
+            &__play {
+                font-family: 'Roboto, Roboto-Bold';
+                color: black;
+            }
+            &__list {
+                font-family: 'Roboto, Roboto-Regular';
+                &--details {
+                    background: transparent;
+                }
+                &--number, &--artist {
+                    color: lightgray;
+                }
+                &--title {
+                    color: black;
+                    font-size: 21.5
+                }
+                &--artist {
+                    font-size: 20;
+                    margin-top: 5
                 }
             }
         }
