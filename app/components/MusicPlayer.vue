@@ -59,6 +59,7 @@ export default {
     //     backdrop-filter: blur(100px);
     //     filter: blur(100px)
     // }
+    display: none;
     AbsoluteLayout {
         transform: translateY(-5);
         width: 100%;

@@ -4,7 +4,7 @@
             <DockLayout stretchLastChild="true" class="detailpage__container">
                 <AbsoluteLayout height="300" dock="top" class="detailpage__container--header">
                     <StackLayout height="100%" width="100%">
-                        <Image src="~/assets/images/electro.png" stretch="aspectFill"/>
+                        <Image :src="randomBackground()" stretch="aspectFill"/>
                     </StackLayout>
                     <StackLayout paddingRight="20" paddingLeft="20" top="70">
                         <GridLayout height="100%" width="100%" columns="*,auto" rows="auto" >
@@ -44,23 +44,25 @@
                         </FlexboxLayout>
                         <Image src="~/assets/images/bars-solid.png" height="30" width="30"/>
                     </FlexboxLayout>
-                    <RadListView height="60.8" for="(song, index) in songs"  orientation="vertical" paddingLeft="10" class="detailpage__container--content__list" height="100%"> <!-- List container -->        
-                        <v-template>
-                        <GridLayout id="songLayout" columns="auto,*,auto" row="auto" marginTop="30"> <!-- Individual Grid -->
-                            <Label text="1" col="0" row="0" rowSpan="2" verticalAlignment="center" class="detailpage__container--content__list--number"/>
-                            <GridLayout col="1" row="0" columns="auto,*" class="detailpage__container--content__list--details" marginLeft="20">
-                                <StackLayout col="0" row="0" rowSpan="2" marginRight="20">
-                                    <Image :src="song.img" height="60" width="60" borderRadius="50%" />
-                                </StackLayout>
-                                <StackLayout orientation="vertical" col="1" row="0">
-                                    <Label :text="song.title"  class="detailpage__container--content__list--title"/>
-                                    <Label :text="song.artist" class="detailpage__container--content__list--artist"/>
-                                </StackLayout>
-                            </GridLayout>
-                            <Image src="~/assets/images/ellipsis-v-solid.png" rowSpan="2" verticalAlignment="center" height="25" width="25" col="2" row="0"/>
-                        </GridLayout> 
-                        </v-template>
-                    </RadListView>
+                    <GridLayout height="100%" rows="*" columns="*">
+                         <RadListView col="0" row="0" id="songList" layout="list" height="100%" for="(song, index) in songs"  orientation="vertical" paddingLeft="10" class="detailpage__container--content__list"> <!-- List container -->        
+                            <v-template>
+                            <GridLayout id="songLayout" columns="auto,*,auto" row="auto" marginTop="30" :class="{'lastItemMargin': index===songs.length-1}"> <!-- Individual Grid -->
+                                <Label :text="index+1<=9 ? `0${index+1}` : `${index+1}`" col="0" row="0" rowSpan="2" verticalAlignment="center" class="detailpage__container--content__list--number"/>
+                                <GridLayout col="1" row="0" columns="auto,*" class="detailpage__container--content__list--details" marginLeft="20">
+                                    <StackLayout col="0" row="0" rowSpan="2" marginRight="20">
+                                        <Image :src="song.images" height="60" width="60" borderRadius="50%" />
+                                    </StackLayout>
+                                    <StackLayout orientation="vertical" col="1" row="0">
+                                        <Label :text="song.title"  class="detailpage__container--content__list--title"/>
+                                        <Label :text="song.artist" class="detailpage__container--content__list--artist"/>
+                                    </StackLayout>
+                                </GridLayout>
+                                <Image src="~/assets/images/ellipsis-v-solid.png" rowSpan="2" verticalAlignment="center" height="25" width="25" col="2" row="0"/>
+                            </GridLayout> 
+                            </v-template>
+                        </RadListView>
+                    </GridLayout>
                 </StackLayout> 
             </DockLayout>
         </ScrollView>
@@ -69,44 +71,44 @@
 <script>
 import {screen} from "tns-core-modules/platform"
 export default {
+    props: ['playlistData'], 
     data(){
         return {
-            songs: [
-                {
-                    img: "~/assets/images/camila-songs/1.png", 
-                    title: "Beautiful in white",
-                    artist: "Westlife"
-                },
-                {
-                    img: "~/assets/images/camila-songs/1.png", 
-                    title: "DDU-DU-DDU-DU",
-                    artist: "BLACKPINK"
-                },
-                {
-                    img: "~/assets/images/camila-songs/1.png", 
-                    title: "Hold On to My Side",
-                    artist: "Xiaoxue Liang"
-                },
-                {
-                    img: "~/assets/images/camila-songs/1.png", 
-                    title: "True Valentine",
-                    artist: "Weki Meki"
-                }
-            ]
+            songs: [], 
+            containerHeight: 1
         }
     },
     methods: {
         onLoad: function(args){
-            const page = args.object;
-            const songLayout = page.getViewById('songLayout');
-
-            console.log(songLayout.getActualSize().height)
+            const page = args.object
+        }, 
+        onScroll: function(){
+            console.log("Scrolling")
+        }, 
+        randomBackground: function(){
+            let { data } = this.playlistData
+            return data[this.getRandomIntInclusive(0, data.length-1)].images
         }
+    }, 
+    computed: {
+        getRandomIntInclusive: function(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+        }
+    },
+    mounted(){
+        console.log(this.playlistData.data)
+        let { data } = this.playlistData
+        this.songs = data
     }
 }
 </script>
 <style lang="scss">
 .detailpage {
+    .lastItemMargin {
+        margin-bottom: 200;
+    }
     font-family: 'Roboto, Roboto-Bold';
     &__container {
         &--header {

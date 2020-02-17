@@ -17,6 +17,7 @@
   "dependencies": {
     "@tweenjs/tween.js": "^18.5.0",
     "@vue/devtools": "^5.0.6",
+    "axios": "^0.19.2",
     "gsap": "^3.1.1",
     "nativescript-audio": "^5.0.5",
     "nativescript-carousel": "^6.1.1",

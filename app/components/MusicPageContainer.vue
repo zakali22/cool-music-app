@@ -74,51 +74,19 @@
                     <!--<GridLayout columns="*,*" rows="*,*" marginTop="20" marginBottom="110">--> <!-- Playlists container -->
                     <ScrollView orientation="horizontal" marginBottom="150" marginTop="20">
                         <StackLayout orientation="horizontal">
-                            <GridLayout columns="*,*" rows="*,*" marginRight="20" @tap="playlistPageLoad">
-                                <Image src="~/assets/images/playlist1/1.png" col="0" row="0"/>
-                                <Image src="~/assets/images/playlist1/2.png" col="1" row="0"/>
-                                <Image src="~/assets/images/playlist1/3.png" col="0" row="1"/>
-                                <Image src="~/assets/images/playlist1/4.png" col="1" row="1"/>
-                            </GridLayout>
-                            <GridLayout columns="*,*" rows="*,*" marginRight="20">
-                                <Image src="~/assets/images/playlist2/1.png" col="0" row="0"/>
-                                <Image src="~/assets/images/playlist2/2.png" col="1" row="0"/>
-                                <Image src="~/assets/images/playlist2/3.png" col="0" row="1"/>
-                                <Image src="~/assets/images/playlist2/4.png" col="1" row="1"/>
-                            </GridLayout>
-                            <GridLayout columns="*,*" rows="*,*">
-                                <Image src="~/assets/images/playlist3/1.png" col="0" row="0"/>
-                                <Image src="~/assets/images/playlist3/2.png" col="1" row="0"/>
-                                <Image src="~/assets/images/playlist3/3.png" col="0" row="1"/>
-                                <Image src="~/assets/images/playlist3/4.png" col="1" row="1"/>
+                            <GridLayout columns="*,*" rows="*,*" marginRight="20" v-for="(playlist,index) in playlists" :key="index" @tap="playlistPageLoad(playlist)" :class="'lastItemNoMargin' ? index===playlists.length-1 : ''">
+                                <Image :src="playlistData.images" v-for="(playlistData,index) in playlist.data.slice(0,4)" :key="index" :col="colPos(index)" :row="rowPos(index)" width="90" height="90"/>
                             </GridLayout>
                         </StackLayout>
                     </ScrollView>
-
-                        <!-- <GridLayout columns="*,*" rows="*,*" col="1" row="1" marginRight="8" marginTop="30">
-                            <Image src="~/assets/images/playlist1/1.png" col="0" row="0"/>
-                            <Image src="~/assets/images/playlist1/2.png" col="1" row="0"/>
-                            <Image src="~/assets/images/playlist1/3.png" col="0" row="1"/>
-                            <Image src="~/assets/images/playlist1/4.png" col="1" row="1"/>
-                        </GridLayout> -->
-                         <!-- <StackLayout col="1" row="0" marginRight="8">
-                            <AbsoluteLayout  height="200" width="200"> 
-                                <AbsoluteLayout width="100%" height="100%"> 
-                                    <Image src="~/assets/images/playlist1/3.png" stretch="aspectFill" width="100%" height="100%" borderRadius="10"/>
-                                    <StackLayout class="carouselContainer" width="100%" height="100%" borderRadius="10"/>
-                                </AbsoluteLayout>
-                                <StackLayout width="100%" top="150" left="0" class="musicpage__content--rec__item--text playlist-text"> 
-                                    <Label text="Playlist 1" horizontalAlignment="center"/>
-                                </StackLayout>
-                            </AbsoluteLayout> 
-                        </StackLayout> -->
-                    <!-- </GridLayout> -->
                 </StackLayout>
             </ScrollView>
         </DockLayout>
     </Page>
 </template>
 <script>
+require("nativescript-nodeify");
+import axios from "axios"
 import DetailsPage from './DetailsPage'
 export default {
     data(){
@@ -132,12 +100,47 @@ export default {
                 {img:"~/assets/images/camila-songs/2.png", name: 'Artist'}, 
                 {img: "~/assets/images/camila-songs/3.png", name: 'New Album'}, 
                 {img: "~/assets/images/camila-songs/1.png", name: 'Album'}, 
-            ]
+            ], 
+            playlists: []
         }
     }, 
     methods: {
-        playlistPageLoad: function(){
+        rowPos: function(index){
+            switch(index){
+                case 0:
+                    console.log("Index: "+ 0)
+                    return '0';
+                case 1: 
+                    return '0';
+                case 2:
+                    return '1';
+                case 3: 
+                    return '1';
+                default: 
+                    return '0';
+            }
+        },
+        colPos: function(index){
+            switch(index){
+                case 0:
+                    console.log("Index: "+ 0)
+                    return '0';
+                case 1: 
+                    return '1';
+                case 2:
+                    return '0';
+                case 3: 
+                console.log("Index: "+ 3)
+                    return '1';
+                default: 
+                    return '0';
+            }
+        },
+        playlistPageLoad: function(playlistData){
             this.$navigateTo(DetailsPage, {
+                props: {
+                    playlistData
+                },
                 frame: 'main-music-page',
                 animate: true, 
                 transition: {
@@ -146,11 +149,42 @@ export default {
                 }
             })
         }
+    },
+    async created(){
+        // Make multiple requests to playlists
+        const result = await axios.all([
+            axios.get('https://api.deezer.com/playlist/908622995'),
+            axios.get('https://api.deezer.com/playlist/30595446'),
+            axios.get('https://api.deezer.com/playlist/59238841')
+        ]).then(axios.spread((...playlists) => {
+            playlists.forEach(playlist => {
+                let playlistResult = playlist.data.tracks.data;
+                let playlistData = []
+                
+                playlistResult.forEach(playlistEl => {
+                    let albumImage = playlistEl.album.cover_medium;
+                    let albumData = {
+                        title: playlistEl.album.title,
+                        artist: playlistEl.artist.name, 
+                        images: albumImage
+                    }
+                    playlistData.push(albumData)
+                })
+
+                this.playlists.push({data: playlistData})
+            })
+        }))
+    }, 
+    mounted(){
+        console.log(this.playlists)
     }
 }
 </script>
 <style lang="scss">
 .musicpage {
+    .lastItemNoMargin {
+        margin-right: 0;
+    }
     .backgroundContainer {
         background-image: linear-gradient(to right top, #9b40bb, #e62f94, #ff4f63, #ff8734, #ebbc12);
         opacity: .3;
@@ -198,9 +232,7 @@ export default {
             &__item {
                 border-radius: 20;
                 margin-right: 20;
-                &.lastItemNoMargin {
-                    margin-right: 0;
-                }
+            
                 &--text {
                     border-bottom-right-radius: 10;
                     border-bottom-left-radius: 10;
