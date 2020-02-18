@@ -74,8 +74,8 @@
                     <!--<GridLayout columns="*,*" rows="*,*" marginTop="20" marginBottom="110">--> <!-- Playlists container -->
                     <ScrollView orientation="horizontal" marginBottom="150" marginTop="20">
                         <StackLayout orientation="horizontal">
-                            <GridLayout columns="*,*" rows="*,*" marginRight="20" v-for="(playlist,index) in playlists" :key="index" @tap="playlistPageLoad(playlist)" :class="'lastItemNoMargin' ? index===playlists.length-1 : ''">
-                                <Image :src="playlistData.images" v-for="(playlistData,index) in playlist.data.slice(0,4)" :key="index" :col="colPos(index)" :row="rowPos(index)" width="90" height="90"/>
+                            <GridLayout columns="*,*" rows="*,*" marginRight="20" v-for="(playlist,index) in allPlaylists" :key="index" @tap="playlistPageLoad(playlist)" :class="'lastItemNoMargin' ? index===playlists.length-1 : ''">
+                                <Image :src="playlistData.album.cover_medium" v-for="(playlistData,index) in playlist.tracks.data.slice(0,4)" :key="index" :col="colPos(index)" :row="rowPos(index)" width="90" height="90"/>
                             </GridLayout>
                         </StackLayout>
                     </ScrollView>
@@ -101,7 +101,8 @@ export default {
                 {img: "~/assets/images/camila-songs/3.png", name: 'New Album'}, 
                 {img: "~/assets/images/camila-songs/1.png", name: 'Album'}, 
             ], 
-            playlists: []
+            playlists: [],
+            allPlaylists: []
         }
     }, 
     methods: {
@@ -157,22 +158,27 @@ export default {
             axios.get('https://api.deezer.com/playlist/30595446'),
             axios.get('https://api.deezer.com/playlist/59238841')
         ]).then(axios.spread((...playlists) => {
+            let allPlaylists = []
             playlists.forEach(playlist => {
-                let playlistResult = playlist.data.tracks.data;
-                let playlistData = []
+                let playlistResult = playlist.data;
+                // let playlistData = []
                 
-                playlistResult.forEach(playlistEl => {
-                    let albumImage = playlistEl.album.cover_medium;
-                    let albumData = {
-                        title: playlistEl.album.title,
-                        artist: playlistEl.artist.name, 
-                        images: albumImage
-                    }
-                    playlistData.push(albumData)
-                })
+                allPlaylists.push(playlistResult)
 
-                this.playlists.push({data: playlistData})
+                // playlistResult.tracks.data.forEach(playlistEl => {
+                //     let albumImage = playlistEl.album.cover_medium;
+                //     let albumData = {
+                //         title: playlistEl.album.title,
+                //         artist: playlistEl.artist, 
+                //         images: albumImage
+                //     }
+                //     playlistData.push(albumData)
+                // })
+
+                // this.playlists.push({data: playlistData})
             })
+            this.allPlaylists = allPlaylists
+            console.log(this.allPlaylists)
         }))
     }, 
     mounted(){
