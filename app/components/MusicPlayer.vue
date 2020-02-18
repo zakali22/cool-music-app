@@ -1,14 +1,14 @@
 <template>
     <Page actionBarHidden="true" class="musicplayer" backgroundColor="transparent" @loaded="scrollerAnim">
-        <AbsoluteLayout width="100%" height="100%">
+        <AbsoluteLayout v-if="selectedSong" width="100%" height="100%">
             <StackLayout left="22" height="100%" width="90" class="musicplayer__content--image-wrapper">
-                <Image src="~/assets/images/camila.png" class="musicplayer__content--image-wrapper__image" stretch="aspectFit" marginTop="24"/>
+                <Image :src="playerData.img" class="musicplayer__content--image-wrapper__image" stretch="aspectFit" marginTop="24"/>
             </StackLayout>
             <GridLayout top="20" columns="120,*,auto" android:cco rows="auto" class="musicplayer__content" >
                 <StackLayout col="1" row="0" height="100%" width="100%">
                     <ScrollView orientation="horizontal" id="name-scroller" scrollBarIndicatorVisible="false">
                         <StackLayout orientation="horizontal">
-                            <Label text="DDU-DU DDU-DU" fontSize="21" color="black" class="textLoop"/>
+                            <Label :text="playerData.title" fontSize="21" color="black" class="textLoop"/>
                         </StackLayout>
                     </ScrollView>
                 </StackLayout>
@@ -26,28 +26,52 @@
 require("nativescript-nodeify");
 import Tween from "@tweenjs/tween.js"
 import gsap from "gsap"
-console.log(gsap)
+import {mapState, mapActions, mapGetters} from "vuex"
+import axios from "axios"
+// console.log(gsap)
 export default {
     data(){
         return {
-
+            playerData: {
+                img: '',
+                title: ''
+            }
         }
     }, 
     methods: {
+        ...mapActions(['getCurrentArtistImage']),
         scrollerAnim: function(args){
             const page = args.object;
             const scroller = page.getViewById("name-scroller")
 
-            console.log("scroller is loaded")
+            if(scroller){
+                console.log("scroller is loaded")
 
-            setTimeout(() => {
-                scroller.scrollToHorizontalOffset(scroller.scrollableWidth, true)
-            }, 500)
-            scroller.scrollToHorizontalOffset(-60, true)
+                setTimeout(() => {
+                    scroller.scrollToHorizontalOffset(scroller.scrollableWidth, true)
+                }, 500)
+                scroller.scrollToHorizontalOffset(-60, true)
+            }
+
         }, 
         rerunAnim: function(scroller){
                 console.log(scroller.scrollableWidth - scroller.scrollableWidth)
                 scroller.scrollToHorizontalOffset(scroller.scrollableWidth - scroller.scrollableWidth, true)
+        }
+    }, 
+    computed: {
+        ...mapState(['selectedSong'])  
+    },
+    watch: {
+        selectedSong: {
+            immediate: true, 
+            deep: true, 
+            handler(newState, oldState){
+                if(newState){
+                    this.playerData.img = this.selectedSong.album.cover_medium
+                    this.playerData.title = this.selectedSong.title
+                }
+            }
         }
     }
 }

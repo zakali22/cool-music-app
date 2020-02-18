@@ -47,7 +47,7 @@
                     <GridLayout height="100%" rows="*" columns="*">
                          <RadListView col="0" row="0" id="songList" layout="list" height="100%" for="(song, index) in songs"  orientation="vertical" paddingLeft="10" class="detailpage__container--content__list"> <!-- List container -->        
                             <v-template>
-                            <GridLayout id="songLayout" columns="auto,*,auto" row="auto" marginTop="30" :class="{'lastItemMargin': index===songs.length-1}"> <!-- Individual Grid -->
+                            <GridLayout id="songLayout" columns="auto,*,auto" row="auto" marginTop="30" :class="{'lastItemMargin': index===songs.length-1}" @tap="playSong(index)"> <!-- Individual Grid -->
                                 <Label :text="index+1<=9 ? `0${index+1}` : `${index+1}`" col="0" row="0" rowSpan="2" verticalAlignment="center" class="detailpage__container--content__list--number"/>
                                 <GridLayout col="1" row="0" columns="auto,*" class="detailpage__container--content__list--details" marginLeft="20">
                                     <StackLayout col="0" row="0" rowSpan="2" marginRight="20">
@@ -74,10 +74,11 @@ import moment from "moment"
 import momentDurationFormatSetup from "moment-duration-format"
 import axios from "axios"
 import {screen} from "tns-core-modules/platform"
+import {mapActions} from "vuex"
 momentDurationFormatSetup(moment);
 
 export default {
-    props: ['playlistData', 'allPlaylis'], 
+    props: ['playlistData'], 
     data(){
         return {
             songs: [], 
@@ -93,6 +94,9 @@ export default {
         }
     },
     methods: {
+        ...mapActions([
+            'selectSong'
+        ]),
         onLoad: function(args){
             const page = args.object
         }, 
@@ -103,6 +107,10 @@ export default {
             min = Math.ceil(min);
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+        }, 
+        playSong: function(index){
+            let songSelected = this.playlistData.tracks.data[index];
+            this.selectSong(songSelected)
         }
     },
     mounted(){

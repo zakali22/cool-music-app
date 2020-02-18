@@ -72,7 +72,7 @@
                     </GridLayout>
 
                     <!--<GridLayout columns="*,*" rows="*,*" marginTop="20" marginBottom="110">--> <!-- Playlists container -->
-                    <ScrollView orientation="horizontal" marginBottom="150" marginTop="20">
+                    <ScrollView orientation="horizontal" :marginBottom="selectedSong ? 150 : 50" marginTop="20">
                         <StackLayout orientation="horizontal">
                             <GridLayout columns="*,*" rows="*,*" marginRight="20" v-for="(playlist,index) in allPlaylists" :key="index" @tap="playlistPageLoad(playlist)" :class="'lastItemNoMargin' ? index===playlists.length-1 : ''">
                                 <Image :src="playlistData.album.cover_medium" v-for="(playlistData,index) in playlist.tracks.data.slice(0,4)" :key="index" :col="colPos(index)" :row="rowPos(index)" width="90" height="90"/>
@@ -88,6 +88,7 @@
 require("nativescript-nodeify");
 import axios from "axios"
 import DetailsPage from './DetailsPage'
+import { mapState } from 'vuex';
 export default {
     data(){
         return {
@@ -109,7 +110,6 @@ export default {
         rowPos: function(index){
             switch(index){
                 case 0:
-                    console.log("Index: "+ 0)
                     return '0';
                 case 1: 
                     return '0';
@@ -124,14 +124,12 @@ export default {
         colPos: function(index){
             switch(index){
                 case 0:
-                    console.log("Index: "+ 0)
                     return '0';
                 case 1: 
                     return '1';
                 case 2:
                     return '0';
                 case 3: 
-                console.log("Index: "+ 3)
                     return '1';
                 default: 
                     return '0';
@@ -150,6 +148,9 @@ export default {
                 }
             })
         }
+    },
+    computed: {
+        ...mapState(['selectedSong'])
     },
     async created(){
         // Make multiple requests to playlists
