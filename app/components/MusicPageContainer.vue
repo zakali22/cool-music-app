@@ -162,28 +162,26 @@ export default {
             let allPlaylists = []
             playlists.forEach(playlist => {
                 let playlistResult = playlist.data;
-                // let playlistData = []
+                let playlistSongs = playlistResult.tracks.data.filter(songs => {
+                    return songs.preview.length;
+                })
                 
-                allPlaylists.push(playlistResult)
+                let playlistWithPreview = {
+                    ...playlistResult, 
+                    tracks: {
+                        data: playlistSongs
+                    }
+                }
+                
+                console.log(playlistWithPreview)
+                allPlaylists.push(playlistWithPreview)
 
-                // playlistResult.tracks.data.forEach(playlistEl => {
-                //     let albumImage = playlistEl.album.cover_medium;
-                //     let albumData = {
-                //         title: playlistEl.album.title,
-                //         artist: playlistEl.artist, 
-                //         images: albumImage
-                //     }
-                //     playlistData.push(albumData)
-                // })
-
-                // this.playlists.push({data: playlistData})
             })
             this.allPlaylists = allPlaylists
-            console.log(this.allPlaylists)
         }))
     }, 
     mounted(){
-        console.log(this.playlists)
+        console.log(this.allPlaylists)
     }
 }
 </script>

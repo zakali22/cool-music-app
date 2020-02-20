@@ -1,6 +1,6 @@
 <template>
-    <Page actionBarHidden="true" class="musicplayer" backgroundColor="transparent" @loaded="scrollerAnim">
-        <AbsoluteLayout v-if="selectedSong" width="100%" height="100%">
+    <Page actionBarHidden="true" class="musicplayer" backgroundColor="transparent" @loaded="scrollerAnim" xmlns:svg="nativescript-svg">
+        <AbsoluteLayout v-if="selectedSong" width="100%" height="100%" id="playerContainer">
             <StackLayout left="22" height="100%" width="90" class="musicplayer__content--image-wrapper">
                 <Image :src="playerData.img" class="musicplayer__content--image-wrapper__image" stretch="aspectFit" marginTop="24"/>
             </StackLayout>
@@ -13,9 +13,9 @@
                     </ScrollView>
                 </StackLayout>
                 <StackLayout class="musicplayer__content--buttons" col="2" row="0" orientation="horizontal"> <!-- Content container -->
-                    <Image src="~/assets/images/step-backward-solid.png" height="19" width="32" verticalAlignment="center" marginRight="10"/>
-                    <Image src="~/assets/images/pause-circle-solid.png" backgroundColor="white" borderRadius="50%" height="45" width="50" verticalAlignment="center" marginRight="10"/>
-                    <Image src="~/assets/images/step-forward-solid.png" height="19" width="32" />
+                    <SVGImage :src="images.prevButton.img" height="19" width="32" verticalAlignment="center" marginRight="10"/>
+                    <SVGImage :src="imageToDisplay()" @tap="playSong" backgroundColor="white" borderRadius="50%" height="45" width="50" verticalAlignment="center" marginRight="10"/>
+                    <SVGImage :src="images.nextButton.img" height="19" width="32" />
                 </StackLayout>
             </GridLayout>
             <!-- <StackLayout top="10" class="overlay" width="100%" height="80" backgroundColor="red"></StackLayout> Background -->
@@ -28,18 +28,56 @@ import Tween from "@tweenjs/tween.js"
 import gsap from "gsap"
 import {mapState, mapActions, mapGetters} from "vuex"
 import axios from "axios"
-// console.log(gsap)
+
+import {ImageSourceSVG} from "nativescript-svg"
+// import {TNSPlayer} from "nativescript-audio"
+
 export default {
     data(){
         return {
             playerData: {
                 img: '',
-                title: ''
+                title: '', 
+                audioUrl: '', 
+                playing: true
+            }, 
+            images: {
+                playButton: {
+                    img: '~/assets/images/play-solid--active.svg'
+                }, 
+                pauseButton: {
+                    img: '~/assets/images/pause-circle-solid.svg'
+                }, 
+                nextButton: {
+                    img: '~/assets/images/step-forward-solid.svg'
+                }, 
+                prevButton: {
+                    img: '~/assets/images/step-backward-solid.svg'
+                }
             }
         }
     }, 
     methods: {
         ...mapActions(['getCurrentArtistImage']),
+        imageToDisplay: function(){
+            if(this.playerData.playing){
+                return this.images.pauseButton.img
+            } else {
+                return this.images.playButton.img
+            }
+        },
+        playSong: function(){
+            // const player = new TNSPlayer();
+            if(this.selectedSong){
+                if(!this.player.isAudioPlaying()){
+                    this.player.resume();
+                    this.playerData.playing = true
+                } else {
+                    this.player.pause()
+                    this.playerData.playing = false
+                }
+            }
+        },
         scrollerAnim: function(args){
             const page = args.object;
             const scroller = page.getViewById("name-scroller")
@@ -52,7 +90,6 @@ export default {
                 }, 500)
                 scroller.scrollToHorizontalOffset(-60, true)
             }
-
         }, 
         rerunAnim: function(scroller){
                 console.log(scroller.scrollableWidth - scroller.scrollableWidth)
@@ -60,7 +97,7 @@ export default {
         }
     }, 
     computed: {
-        ...mapState(['selectedSong'])  
+        ...mapState(['selectedSong', 'player'])
     },
     watch: {
         selectedSong: {
@@ -70,9 +107,19 @@ export default {
                 if(newState){
                     this.playerData.img = this.selectedSong.album.cover_medium
                     this.playerData.title = this.selectedSong.title
+                    this.playerData.audioUrl = this.selectedSong.preview
+
+                    // alert(this.selectedSong.preview)
                 }
             }
         }
+        // playerData: {
+        //     immediate: true, 
+        //     deep: true, 
+        //     handler(newState, oldState){
+        //         this.imageToDisplay();
+        //     }
+        // }
     }
 }
 </script>
@@ -113,6 +160,12 @@ export default {
         }
         &--buttons {
             padding: 20 0;
+            .playButton {
+                background: red;
+                path {
+                    fill: red !important;
+                }
+            }
         }
     }
 }

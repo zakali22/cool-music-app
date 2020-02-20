@@ -17,19 +17,19 @@
                     <AbsoluteLayout top="218" width="100%">
                         <FlexboxLayout  width="100%" flexDirection="row" justifyContent="space-between" alignItems="center" class="detailpage__container--header__stats">
                             <StackLayout orientation="vertical">
-                                <Image src="~/assets/images/heart-regular.png" height="30" width="30"/>
+                                <SVGImage src="~/assets/images/heart-regular.svg" height="30" width="30"/>
                                 <Label :text="pageData.fans"/>
                             </StackLayout>
                             <StackLayout orientation="vertical">
-                                <Image src="~/assets/images/comment-regular.png" height="30" width="30" />
+                                <SVGImage src="~/assets/images/comment-regular.svg" height="30" width="30" />
                                 <Label text="801"/>
                             </StackLayout>
                             <StackLayout orientation="vertical">
-                                <Image src="~/assets/images/play-solid.png" height="30" width="30"/>
+                                <SVGImage src="~/assets/images/play-solid.svg" id="playBtn" class="playButton" height="30" width="30"/>
                                 <Label :text="`${pageData.duration}m`"/>
                             </StackLayout>
                             <StackLayout orientation="vertical">
-                                <Image src="~/assets/images/download-solid.png" height="30" width="30"/>
+                                <SVGImage src="~/assets/images/download-solid.svg" height="30" width="30"/>
                                 <Label text="Download"/>
                             </StackLayout>
                         </FlexboxLayout>
@@ -42,7 +42,7 @@
                             <Image src="~/assets/images/bt1.png" height="35" width="35" marginRight="10"/>
                             <Label :text="`Play All (${Number(pageData.tracksNo)})`" fontSize="17"/>
                         </FlexboxLayout>
-                        <Image src="~/assets/images/bars-solid.png" height="30" width="30"/>
+                        <SVGImage src="~/assets/images/bars-solid.svg" height="30" width="30"/>
                     </FlexboxLayout>
                     <GridLayout height="100%" rows="*" columns="*">
                          <RadListView col="0" row="0" id="songList" layout="list" height="100%" for="(song, index) in songs"  orientation="vertical" paddingLeft="10" class="detailpage__container--content__list"> <!-- List container -->        
@@ -58,7 +58,7 @@
                                         <Label :text="song.artist.name" class="detailpage__container--content__list--artist"/>
                                     </StackLayout>
                                 </GridLayout>
-                                <Image src="~/assets/images/ellipsis-v-solid.png" rowSpan="2" verticalAlignment="center" height="25" width="25" col="2" row="0"/>
+                                <SVGImage src="~/assets/images/ellipsis-v-solid.svg" rowSpan="2" verticalAlignment="center" height="25" width="25" col="2" row="0"/>
                             </GridLayout> 
                             </v-template>
                         </RadListView>
@@ -74,7 +74,8 @@ import moment from "moment"
 import momentDurationFormatSetup from "moment-duration-format"
 import axios from "axios"
 import {screen} from "tns-core-modules/platform"
-import {mapActions} from "vuex"
+import {mapActions, mapState} from "vuex"
+import {TNSPlayer} from "nativescript-audio"
 momentDurationFormatSetup(moment);
 
 export default {
@@ -99,6 +100,7 @@ export default {
         ]),
         onLoad: function(args){
             const page = args.object
+            const svg = page.getViewById("playBtn")
         }, 
         onScroll: function(){
             console.log("Scrolling")
@@ -109,9 +111,19 @@ export default {
             return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
         }, 
         playSong: function(index){
+            // const player = new TNSPlayer();
             let songSelected = this.playlistData.tracks.data[index];
             this.selectSong(songSelected)
+            
+            if(this.selectedSong){
+                this.player.playFromUrl({
+                    audioFile: this.selectedSong.preview
+                })
+            }
         }
+    },
+    computed: {
+        ...mapState(['selectedSong', 'player'])
     },
     mounted(){
         console.log(this.playlistData.data)
@@ -152,6 +164,9 @@ export default {
                 Label {
                     font-family: 'Roboto, Roboto-Regular';
                     margin-top: 12;
+                }
+                .playButton path {
+                    fill: green !important;
                 }
             }
         }

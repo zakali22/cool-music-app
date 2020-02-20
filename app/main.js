@@ -6,6 +6,7 @@ import VueDevtools from 'nativescript-vue-devtools'
 import RadListView from 'nativescript-ui-listview/vue';
 
 
+
 if(TNS_ENV !== 'production') {
   Vue.use(VueDevtools)
   Vue.use(RadListView);
@@ -18,7 +19,7 @@ Vue.config.silent = (TNS_ENV === 'production')
 Vue.registerElement("Gradient", () => require("nativescript-gradient").Gradient);
 Vue.registerElement('Carousel', () => require('nativescript-carousel').Carousel);
 Vue.registerElement('CarouselItem', () => require('nativescript-carousel').CarouselItem);
-
+Vue.registerElement('SVGImage', () => require('@exeleon/nativescript-svg').SVGImage);
 
 new Vue({
   store,
