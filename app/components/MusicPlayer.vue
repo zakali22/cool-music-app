@@ -108,33 +108,18 @@ export default {
                     this.playerData.img = this.selectedSong.album.cover_medium
                     this.playerData.title = this.selectedSong.title
                     this.playerData.audioUrl = this.selectedSong.preview
-
-                    // alert(this.selectedSong.preview)
                 }
             }
         }
-        // playerData: {
-        //     immediate: true, 
-        //     deep: true, 
-        //     handler(newState, oldState){
-        //         this.imageToDisplay();
-        //     }
-        // }
     }
 }
 </script>
 <style lang="scss">
 .musicplayer {
-    // .overlay {
-    //     background: rgba(255, 255, 255, 0.89);
-    //     backdrop-filter: blur(100px);
-    //     filter: blur(100px)
-    // }
     display: none;
     AbsoluteLayout {
         transform: translateY(-5);
         width: 100%;
-        // background: rgba(255, 255, 255, 0)
     }
     &__content {
         background: rgb(255, 255, 255);

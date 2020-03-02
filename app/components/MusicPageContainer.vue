@@ -39,18 +39,18 @@
                         </CarouselItem>
                     </Carousel>
                 </GridLayout>
-                <StackLayout width="100%" class="musicpage__search" top="15"> <!-- Search bar -->
+                <!-- <StackLayout width="100%" class="musicpage__search" top="15"> Search Bar
                     <StackLayout width="90%">
                         <TextField class="music__search--bar" hint="Search Song Singer" />
                     </StackLayout>
-                </StackLayout>
+                </StackLayout> -->
             </AbsoluteLayout>
             <ScrollView scrollBarIndicatorVisible="false">
                 <StackLayout class="musicpage__content">
                     <Label text="Recommended" class="musicpage__content--heading"/> <!-- Recommended Section -->
                     <ScrollView orientation="horizontal" scrollBarIndicatorVisible="false"> <!-- Horizontal scrolling -->
                         <StackLayout orientation="horizontal" marginTop="20"> <!-- Scrolling container to space out -->
-                            <StackLayout orientation="horizontal" v-for="(item, index) in recommendedList" :key="index">
+                            <StackLayout orientation="horizontal" v-for="(item, index) in recommendedList" :key="index" @tap="goToPage(item)">
                                 <AbsoluteLayout :class="['musicpage__content--rec__item', {'lastItemNoMargin': index===recommendedList.length-1}]" height="150" width="145"> <!-- Individual item -->
                                     <AbsoluteLayout width="100%" height="100%"> <!-- Image wrapper -->
                                         <Image :src="item.img" stretch="aspectFill" width="100%" height="100%" borderRadius="10"/>
@@ -88,7 +88,7 @@
 require("nativescript-nodeify");
 import axios from "axios"
 import DetailsPage from './DetailsPage'
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 export default {
     data(){
         return {
@@ -107,6 +107,30 @@ export default {
         }
     }, 
     methods: {
+        ...mapActions(['setAllPlaylists']),
+        shuffle: function(array){
+            for (let i = array.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        },
+        goToPage: async function(page){
+            const res = await axios.get('https://api.deezer.com/chart');
+            const playlistData = res.data;
+            console.log(playlistData)
+            this.$navigateTo(DetailsPage, {
+                props: {
+                    playlistData,
+                    type: 'charts'
+                },
+                frame: 'main-music-page', 
+                animated: true, 
+                transition: {
+                    name: 'slide', 
+                    duration: 500
+                }
+            })
+        },
         rowPos: function(index){
             switch(index){
                 case 0:
@@ -138,7 +162,8 @@ export default {
         playlistPageLoad: function(playlistData){
             this.$navigateTo(DetailsPage, {
                 props: {
-                    playlistData
+                    playlistData, 
+                    type: 'playlists'
                 },
                 frame: 'main-music-page',
                 animate: true, 
@@ -150,14 +175,14 @@ export default {
         }
     },
     computed: {
-        ...mapState(['selectedSong'])
+        ...mapState(['selectedSong', 'allPlaylists'])
     },
     async created(){
         // Make multiple requests to playlists
         const result = await axios.all([
-            axios.get('https://api.deezer.com/playlist/908622995'),
-            axios.get('https://api.deezer.com/playlist/30595446'),
-            axios.get('https://api.deezer.com/playlist/59238841')
+        axios.get('https://api.deezer.com/playlist/908622995'),
+        axios.get('https://api.deezer.com/playlist/30595446'),
+        axios.get('https://api.deezer.com/playlist/59238841')
         ]).then(axios.spread((...playlists) => {
             let allPlaylists = []
             playlists.forEach(playlist => {
@@ -177,12 +202,14 @@ export default {
                 allPlaylists.push(playlistWithPreview)
 
             })
-            this.allPlaylists = allPlaylists
+            this.allPlaylists = allPlaylists;
+            this.setAllPlaylists(this.allPlaylists);
         }))
     }, 
     mounted(){
         console.log(this.allPlaylists)
     }
+    // watch: {}
 }
 </script>
 <style lang="scss">

@@ -15,16 +15,16 @@
                         </GridLayout>
                     </StackLayout>
                     <AbsoluteLayout top="218" width="100%">
-                        <FlexboxLayout  width="100%" flexDirection="row" justifyContent="space-between" alignItems="center" class="detailpage__container--header__stats">
-                            <StackLayout orientation="vertical">
+                        <FlexboxLayout  width="100%" flexDirection="row" :justifyContent="'space-between'" alignItems="center" class="detailpage__container--header__stats">
+                            <StackLayout orientation="vertical" v-if="this.type==='playlists'">
                                 <SVGImage src="~/assets/images/heart-regular.svg" height="30" width="30"/>
                                 <Label :text="pageData.fans"/>
                             </StackLayout>
-                            <StackLayout orientation="vertical">
+                            <StackLayout orientation="vertical" v-if="this.type==='playlists'">
                                 <SVGImage src="~/assets/images/comment-regular.svg" height="30" width="30" />
                                 <Label text="801"/>
                             </StackLayout>
-                            <StackLayout orientation="vertical">
+                            <StackLayout orientation="vertical"  v-if="this.type==='playlists'">
                                 <SVGImage src="~/assets/images/play-solid.svg" id="playBtn" class="playButton" height="30" width="30"/>
                                 <Label :text="`${pageData.duration}m`"/>
                             </StackLayout>
@@ -79,7 +79,7 @@ import {TNSPlayer} from "nativescript-audio"
 momentDurationFormatSetup(moment);
 
 export default {
-    props: ['playlistData'], 
+    props: ['playlistData', 'type'], 
     data(){
         return {
             songs: [], 
@@ -123,10 +123,16 @@ export default {
         }
     },
     computed: {
-        ...mapState(['selectedSong', 'player'])
+        ...mapState(['selectedSong', 'player']), 
+        marginRightIcon: function(){
+            if(this.type==='charts'){
+                return {
+                    'margin-right': 20
+                }
+            }
+        }
     },
     mounted(){
-        console.log(this.playlistData.data)
         let { data } = this.playlistData.tracks
         this.songs = data
     }, 
@@ -139,7 +145,7 @@ export default {
         this.pageData.bgImg = selectedTrack.album.cover_medium;
         this.pageData.artistImg = result.data.picture_medium;
         this.pageData.fans = playlist.fans;
-        this.pageData.tracksNo = playlist.nb_tracks;
+        this.pageData.tracksNo = this.type==='playlists' ? playlist.nb_tracks : playlist.tracks.data.length;
         this.pageData.duration = moment.duration(Number(playlist.duration), 'seconds').minutes()
 
     }
@@ -164,6 +170,9 @@ export default {
                 Label {
                     font-family: 'Roboto, Roboto-Regular';
                     margin-top: 12;
+                }
+                .marginRightIcon {
+                    margin-right: 20;
                 }
                 .playButton path {
                     fill: green !important;

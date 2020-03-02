@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {CHANGE_SELECTED, SET_CURRENT_ARTIST_IMG, CHANGE_PAGE} from "./mutation-types"
+import {CHANGE_SELECTED, SET_CURRENT_ARTIST_IMG, CHANGE_PAGE, SET_PLAYLISTS_FETCH} from "./mutation-types"
 import axios from "axios"
 import {TNSPlayer} from "nativescript-audio"
 
@@ -8,10 +8,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    playlists: [],
     selectedSong: null, 
     startPlay: false,
     currArtistImg: '', 
-    activePage: 'settings', 
+    activePage: 'listen', 
     player: new TNSPlayer()
   },
   mutations: {
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     }, 
     [CHANGE_PAGE] (state, page){
       state.activePage = page
+    }, 
+    [SET_PLAYLISTS_FETCH] (state, playlists){
+      state.playlists = playlists
     }
   },
   actions: {
@@ -37,6 +41,9 @@ export default new Vuex.Store({
     }, 
     changeActivePage({commit}, page){
       commit(CHANGE_PAGE, page)
+    }, 
+    setAllPlaylists({commit}, playlists){
+      commit(SET_PLAYLISTS_FETCH, playlists)
     }
   }
 });

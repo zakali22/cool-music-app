@@ -9,19 +9,23 @@
                 <SVGImage :src="activePageImage('search')" height="25"/>
                 <Label text="Search" />
             </StackLayout>
-            <StackLayout :class="['bottomnav__icon--container', {'active': activePage==='settings'}]" id="settings"  @tap="goToPage('settings')">
-                <SVGImage :src="activePageImage('settings')" height="25"/>
-                <Label text="Settings" />                
+            <StackLayout :class="['bottomnav__icon--container', {'active': activePage==='chart'}]" id="chart"  @tap="goToPage('chart')">
+                <SVGImage :src="activePageImage('chart')" height="25"/>
+                <Label text="Chart" />                
             </StackLayout>
-            <StackLayout :class="['bottomnav__icon--container', {'active': activePage==='account'}]" id="account"  @tap="goToPage('account')">
-                <SVGImage :src="activePageImage('account')" id="account" height="25"/>
-                <Label text="Account" />                
+            <StackLayout :class="['bottomnav__icon--container', {'active': activePage==='account'}]" id="settings"  @tap="goToPage('settings')">
+                <SVGImage :src="activePageImage('settings')" id="account" height="25"/>
+                <Label text="Settings" />                
             </StackLayout>
         </FlexboxLayout>
     </Page>
 </template>
 <script>
 import {mapState, mapActions} from "vuex"
+import SearchPage from "./SearchPage"
+import MusicPageContainer from './MusicPageContainer'
+import SettingsPage from './SettingsPage'
+import ChartPage from './ChartPage'
 export default {
     data(){
         return {
@@ -34,11 +38,11 @@ export default {
                     active: '~/assets/images/search-solid--active.svg',
                     default: '~/assets/images/search-solid.svg'                    
                 }, 
-                settings: {
-                    active: '~/assets/images/cog-solid--active.svg',
-                    default: '~/assets/images/cog-solid.svg'                    
+                chart: {
+                    active: '~/assets/images/chart-line-solid--active.svg',
+                    default: '~/assets/images/chart-line-solid.svg'                    
                 }, 
-                account: {
+                settings: {
                     active: '~/assets/images/user-circle-regular--active.svg',
                     default: '~/assets/images/user-circle-regular.svg'                   
                 }             
@@ -67,15 +71,63 @@ export default {
                     return this.images['settings'].default
                 }
             } else {
-                if(this.activePage === 'account'){
-                    return this.images['account'].active
+                if(this.activePage === 'chart'){
+                    return this.images['chart'].active
                 } else {
-                    return this.images['account'].default
+                    return this.images['chart'].default
                 }
             }
         }, 
         goToPage: function(page){
-            this.changeActivePage(page)
+            if(page !== this.activePage){
+                this.changeActivePage(page)
+                if(page==='search'){
+                    this.$navigateTo(SearchPage, {
+                        frame: 'main-music-page', 
+                        animated: true, 
+                        transition: {
+                            name: 'slidetop',
+                            duration: 600
+                        }
+                    })
+                } else if(page==='listen'){
+                    this.$navigateTo(MusicPageContainer, {
+                        frame: 'main-music-page', 
+                        animated: true, 
+                        transition: {
+                            name: 'slidebottom',
+                            duration: 600
+                        }
+                    })
+                } else if(page==='settings'){
+                    this.$navigateTo(SettingsPage, {
+                        frame: 'main-music-page', 
+                        animated: true, 
+                        transition: {
+                            name: 'slide',
+                            duration: 600
+                        }
+                    })
+                } else if(page==='chart'){
+                    this.$navigateTo(ChartPage, {
+                        frame: 'main-music-page', 
+                        animated: true, 
+                        transition: {
+                            name: 'slide',
+                            duration: 600
+                        }
+                    })
+                }
+            }
+            // if(page==='listen'){
+            //     this.$navigateTo(ListenPage)
+            // } else if(page==='search'){
+            //     this.$navigateTo(SearchPage)
+            // } else if(page==='settings'){
+            //     this.$navigateTo(SettingsPage)
+            // } else {
+            //     this.$navigateTo(AccountsPage)
+            // }
         }
     },
     computed: {
@@ -86,7 +138,7 @@ export default {
             immediate: true, 
             deep: true, 
             handler: function(newState, oldState){
-                
+
             }
         }
     }
