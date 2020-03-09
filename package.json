@@ -28,6 +28,8 @@
     "nativescript-fonticon": "^2.0.0",
     "nativescript-gradient": "^2.0.1",
     "nativescript-nodeify": "^0.8.0",
+    "nativescript-platform-css": "^1.6.10",
+    "nativescript-platform-css-free": "^1.6.16",
     "nativescript-socketio": "^3.3.1",
     "nativescript-svg": "^1.3.7",
     "nativescript-toasty": "^1.4.0",
