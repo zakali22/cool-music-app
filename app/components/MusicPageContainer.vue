@@ -1,5 +1,5 @@
 <template>
-    <Page actionBarHidden="true">
+    <Page actionBarHidden="true" :class="[deviceWidthClass, pageClasses]" @loaded="deviceWidthClassSetting">
         <DockLayout stretchLastChild="true">
             <AbsoluteLayout dock="top"> <!-- Carousel/Search container -->
                 <GridLayout :height="gridLayout.height" width="100%" columns="*" @layoutChanged="shrinkHeightCarousel" ref="layout"> <!-- Carousel container -->
@@ -89,8 +89,10 @@ require("nativescript-nodeify");
 import axios from "axios"
 import DetailsPage from './DetailsPage'
 import { mapState, mapActions } from 'vuex';
-require('nativescript-platform-css-free')
+// require('nativescript-platform-css-free')
+
 import * as utils from "utils/utils";
+import * as platformModule from 'tns-core-modules/platform'
 export default {
     data(){
         return {
@@ -111,13 +113,52 @@ export default {
                 {img: "~/assets/images/camila-songs/1.png", name: 'Album'}, 
             ], 
             playlists: [],
-            allPlaylists: []
+            allPlaylists: [], 
+            deviceWidthClass: ''
         }
     }, 
     methods: {
         ...mapActions(['setAllPlaylists']),
         changeHeightStack: function(){
             console.log("Layout changed Stack")
+        },
+        deviceWidthClassSetting: function(){
+            const deviceWidth = platformModule.screen.mainScreen.widthDIPs;
+            console.log("Height of screen")
+            console.log(platformModule.screen.mainScreen.heightDIPs)
+            if (deviceWidth >= 1280) {
+                this.deviceWidthClass = "1280";
+                console.log('Layout')
+                console.log(deviceWidth)
+            } else if (deviceWidth >= 1024) {
+                this.deviceWidthClass = "1024";
+                console.log('Layout')
+                console.log(deviceWidth)
+            } else if (deviceWidth >= 800) {
+                this.deviceWidthClass = "800";
+                console.log('Layout')
+                console.log(deviceWidth)
+            } else if (deviceWidth >= 600) {
+                this.deviceWidthClass = "600";
+                console.log('Layout')
+                console.log(deviceWidth)
+            } else if (deviceWidth >= 540) {
+                this.deviceWidthClass = "540";
+                console.log('Layout')
+                console.log(deviceWidth)
+            } else if (deviceWidth >= 480) {
+                this.deviceWidthClass ="480";
+                console.log('Layout')
+                console.log(deviceWidth)
+            } else if (deviceWidth >= 400) {
+                this.deviceWidthClass = "400";
+                console.log('Layout')
+                console.log(deviceWidth)
+            } else if (deviceWidth >= 360) {
+                this.deviceWidthClass = "360";
+                console.log('Layout')
+                console.log(deviceWidth)
+            }
         },
         shrinkHeightCarousel: function(){
             const width = utils.layout.toDeviceIndependentPixels(
@@ -200,7 +241,13 @@ export default {
         }
     },
     computed: {
-        ...mapState(['selectedSong', 'allPlaylists'])
+        ...mapState(['selectedSong', 'allPlaylists']), 
+        pageClasses: function(){ // Set android/ios classes
+            return {
+                'platform-ios': platformModule.isIOS, 
+                'platform-android': platformModule.isAndroid
+            }
+        }
     },
     async created(){
         // Make multiple requests to playlists
@@ -238,4 +285,94 @@ export default {
 }
 </script>
 <style lang="scss">
+.musicpage {
+    .lastItemNoMargin {
+        margin-right: 0;
+    }
+    .backgroundContainer {
+        background-image: linear-gradient(to right top, #9b40bb, #e62f94, #ff4f63, #ff8734, #ebbc12);
+        opacity: .3;
+        z-index: 1;
+    }
+    .carouselContainer {
+        // background-image: linear-gradient(to right top, #9b40bb, #e62f94, #ff4f63, #ff8734, #ebbc12);
+        opacity: .6;
+        z-index: 1;
+    }
+    &__header {
+        &--text {
+            font-family: "Oswald, Oswald-Regular";
+            text-transform: uppercase;
+            font-size: 55;
+            &#imagine-dragon {
+                font-size: 45;
+            }
+        }
+    }
+    &__search {
+        &--bar, TextField {
+            border-width: 5;
+            border-color: transparent;
+            background: #d3d3d3;
+            opacity: 0.8;
+            border-radius: 30;
+            padding: 0 15;
+            height: 40;
+            font-size: 18;
+            color: white;
+        }
+    }
+    &__content {
+        padding: 25 20 25 25;
+        &--heading {
+            font-size: 22;
+            letter-spacing: .009;
+            color: black; 
+            font-family: "Roboto, Roboto-Regular";
+            text-transform: capitalize;
+        }
+        &--rec {
+            &__item {
+                border-radius: 20;
+                margin-right: 20;
+            
+                &--text {
+                    border-bottom-right-radius: 10;
+                    border-bottom-left-radius: 10;
+                    padding: 10 0;
+                    filter: blur(150%);
+                    // backdrop-filter: blur(100px);
+                    background: rgba(211, 211, 211, 0.637);
+                    font-size: 19;
+                    color: white;
+
+                    &.playlist-text {
+                        font-size: 22;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Android and iOS specific CSS
+.platform-android .musicpage {
+    &__header {
+        &--text {
+            font-size: 100;
+            &#imagine-dragon {
+                font-size: 100;
+            }
+        }
+    }
+}
+
+.400 .musicpage {
+    &__header {
+        &--text {
+            color: red
+        }
+    }
+}
+
 </style>
