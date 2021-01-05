@@ -19,7 +19,7 @@
     "@teammaestro/nativescript-svg": "^1.0.1",
     "@tweenjs/tween.js": "^18.5.0",
     "@vue/devtools": "^5.3.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "gsap": "^3.1.1",
     "moment": "^2.24.0",
     "moment-duration-format": "^2.3.2",
